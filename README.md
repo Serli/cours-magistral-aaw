@@ -1,150 +1,282 @@
-# Architecture des Applications Web  
-## Master Informatique — Cours magistral
+# Syllabus – Architecture des Applications Web  
+## Master Informatique — Cours magistral (14 parties)
 
 ---
 
-## I. Introduction générale
-
-1. **Définition et enjeux des applications web**
-   - Différence entre application web et site web  
-   - Pourquoi les architectures web sont cruciales (scalabilité, performance, sécurité)  
-   - Évolution historique : CGI → LAMP → Cloud-native  
-
-2. **Panorama des architectures**
-   - Monolithique  
-   - Client-serveur  
-   - N-tiers  
-   - Microservices et serverless  
+### 🧭 Objectif global du cours
+Comprendre les **principes, composants et évolutions des architectures web**, de HTTP aux microservices et applications cloud-native.  
+L’étudiant doit être capable, à la fin du cours, de **concevoir et critiquer une architecture web complète**, côté client et serveur.
 
 ---
 
-## II. Fondamentaux du Web
+## 🧩 Partie 1 — Introduction & enjeux du Web moderne
 
-1. **Le protocole HTTP**
-   - Structure d’une requête et d’une réponse  
-   - Méthodes : GET, POST, PUT, DELETE…  
-   - Codes de statut  
-   - En-têtes : Content-Type, Accept, Cache-Control, CORS, etc.  
+**Objectifs pédagogiques :**
+- Comprendre la différence entre site web et application web.  
+- Identifier les enjeux d’architecture : scalabilité, performance, sécurité, maintenabilité.
 
-2. **Les standards du Web**
-   - HTML, CSS, JavaScript  
-   - Modèle DOM  
-   - Rôle des navigateurs  
+**Contenu :**
+- Évolution du Web : de CGI à l’ère du cloud et de l’edge computing  
+- Panorama des architectures : monolithique, client-serveur, N-tiers, microservices  
+- Présentation du projet fil rouge du cours (mini-application à concevoir)
 
-3. **Communication et état**
-   - Statelessness de HTTP  
-   - Cookies, sessions, tokens  
-   - Stockage côté client (localStorage, IndexedDB)  
+**Lectures conseillées :**
+- *The Architecture of the World Wide Web* (W3C)  
+- *Martin Fowler – Patterns of Enterprise Application Architecture* (chap. 1)
 
 ---
 
-## III. Architectures côté serveur
+## 🧩 Partie 2 — Le protocole HTTP en profondeur
 
-1. **Serveurs Web et Application Servers**
-   - Apache, Nginx  
-   - Middleware (Express, Spring Boot, Django)  
+**Objectifs pédagogiques :**
+- Comprendre le fonctionnement bas niveau du protocole HTTP.  
+- Analyser les requêtes/réponses et en-têtes.
 
-2. **Accès aux données**
-   - Drivers et ORM  
-   - SQL vs NoSQL  
-   - Caching (Redis, Memcached)  
+**Contenu :**
+- Requête et réponse HTTP : structure, headers, status codes  
+- Méthodes (GET, POST, PUT, DELETE…)  
+- Cache-Control, Content-Type, CORS  
+- Introduction à HTTPS et TLS  
 
-3. **Sécurité côté serveur**
-   - Authentification & autorisation  
-   - OWASP Top 10  
-   - HTTPS / TLS  
-
----
-
-## IV. Architectures côté client
-
-1. **Modèle classique**
-   - Pages servies depuis le serveur  
-   - Rechargement complet  
-
-2. **Ajax et le passage vers des applications dynamiques**
-   - XMLHttpRequest et `fetch()`  
-   - JSON comme format d’échange standard  
-
-3. **Les Single Page Applications (SPA)**
-   - Concept et fonctionnement  
-   - Frameworks modernes : React, Angular, Vue  
-   - Avantages et limites  
+**Travaux :**
+- Analyse de requêtes avec `curl` et DevTools navigateur
 
 ---
 
-## V. APIs et intégration
+## 🧩 Partie 3 — Les standards du Web
 
-1. **REST**
-   - Principes : ressources, uniformité, statelessness  
-   - Bonnes pratiques de design : versionnement, pagination, HATEOAS  
+**Objectifs pédagogiques :**
+- Comprendre le rôle de HTML, CSS et JavaScript.  
+- Manipuler le DOM et les interactions client.
 
-2. **GraphQL**
-   - Différences avec REST  
-   - Cas d’usage et limites  
+**Contenu :**
+- HTML5 : structure sémantique  
+- CSS3 : responsive design, layout  
+- JS : événements, manipulation du DOM  
+- Cycle de vie d’une page web  
 
-3. **WebSockets & temps réel**
-   - Différences avec HTTP  
-   - Exemples : chat, notifications  
-
-4. **API sécurisées**
-   - OAuth 2.0, OpenID Connect  
-   - JWT (JSON Web Tokens)  
+**Travaux :**
+- Création d’une page interactive simple (DOM + JS pur)
 
 ---
 
-## VI. Architectures distribuées et scalabilité
+## 🧩 Partie 4 — Gestion de l’état et communication client-serveur
 
-1. **Monolithes vs microservices**
-   - Découpage fonctionnel  
-   - Communication inter-services : REST, gRPC, message brokers  
+**Objectifs pédagogiques :**
+- Comprendre la statelessness de HTTP et les mécanismes pour gérer l’état.  
+- Savoir utiliser cookies, sessions et tokens.
 
-2. **Orchestration et conteneurs**
-   - Docker, Kubernetes  
-   - Patterns d’orchestration  
+**Contenu :**
+- Cookies, session côté serveur  
+- JWT, OAuth, OpenID  
+- Stockage client : localStorage, sessionStorage, IndexedDB  
 
-3. **Performance et disponibilité**
-   - Load balancing  
-   - CDN  
-   - Patterns de résilience : circuit breaker, retry, fallback  
-
----
-
-## VII. Nouvelles tendances
-
-1. **Serverless et FaaS (Functions as a Service)**
-   - AWS Lambda, Azure Functions  
-   - Avantages et contraintes  
-
-2. **Jamstack**
-   - Sites statiques + API + CDN  
-   - Exemples : Netlify, Vercel  
-
-3. **Progressive Web Apps (PWA)**
-   - Service Workers  
-   - Mode hors-ligne  
-   - Installation sur mobile  
+**Travaux :**
+- Implémentation d’un petit login avec sessions et cookies
 
 ---
 
-## VIII. Études de cas et perspectives
+## 🧩 Partie 5 — Architectures côté serveur
 
-1. **Étude d’architectures réelles**
-   - Exemple d’une application e-commerce  
-   - Exemple d’un service de streaming vidéo  
-   - Exemple d’une messagerie temps réel  
+**Objectifs pédagogiques :**
+- Comprendre le rôle des serveurs web et des frameworks back-end.  
+- Découvrir l’accès aux données et la sécurité.
 
-2. **Perspectives**
-   - WebAssembly  
-   - Edge computing  
-   - Intelligence artificielle embarquée côté client  
+**Contenu :**
+- Apache, Nginx, Express, Django, Spring Boot  
+- ORM et gestion des bases de données (SQL / NoSQL)  
+- Caching : Redis, Memcached  
+- Sécurité : OWASP Top 10  
+
+**Travaux :**
+- Mise en place d’une mini API Express + SQLite
+
+---
+
+## 🧩 Partie 6 — Architectures côté client
+
+**Objectifs pédagogiques :**
+- Comprendre la différence entre modèles “page reload” et “SPA”.  
+- Découvrir les frameworks front modernes.
+
+**Contenu :**
+- Ajax et `fetch()`  
+- JSON comme format standard  
+- SPA : principes et fonctionnement  
+- React / Vue / Angular : panorama  
+
+**Travaux :**
+- Construction d’une SPA minimaliste avec React (ou Vue)
 
 ---
 
-## Structure pédagogique suggérée
+## 🧩 Partie 7 — Les APIs REST
 
-- **Durée :** 12 à 14 semaines  
-- **Format :** Cours magistral + études de cas + mini-projets  
-- **Objectif :** Comprendre, concevoir et critiquer des architectures d’applications web modernes.  
+**Objectifs pédagogiques :**
+- Concevoir et documenter une API RESTful.  
+- Comprendre les bonnes pratiques de design.
+
+**Contenu :**
+- Ressources, endpoints, statelessness  
+- Versionnement, pagination, HATEOAS  
+- OpenAPI / Swagger  
+
+**Travaux :**
+- Conception d’une API REST + documentation OpenAPI
 
 ---
+
+## 🧩 Partie 8 — Alternatives à REST : GraphQL, WebSockets
+
+**Objectifs pédagogiques :**
+- Comprendre les motivations derrière GraphQL.  
+- Découvrir les architectures en temps réel.
+
+**Contenu :**
+- GraphQL vs REST : modèles, flexibilité, complexité  
+- Subscriptions, WebSockets  
+- Exemple : chat en temps réel  
+
+**Travaux :**
+- Petit chat en Node.js avec WebSockets
+
+---
+
+## 🧩 Partie 9 — Microservices et communication distribuée
+
+**Objectifs pédagogiques :**
+- Comprendre les limites du monolithe.  
+- Concevoir une architecture microservices.
+
+**Contenu :**
+- Décomposition fonctionnelle  
+- REST, gRPC, message brokers  
+- Gestion de la cohérence et de la latence  
+
+**Travaux :**
+- Découpage d’un projet monolithique en microservices  
+
+---
+
+## 🧩 Partie 10 — Conteneurisation et orchestration
+
+**Objectifs pédagogiques :**
+- Comprendre le rôle de Docker et Kubernetes.  
+- Gérer le déploiement et l’isolation des services.
+
+**Contenu :**
+- Dockerfile, images, volumes, réseaux  
+- Docker Compose  
+- Introduction à Kubernetes et pods  
+
+**Travaux :**
+- Conteneuriser les microservices développés en Partie 9
+
+---
+
+## 🧩 Partie 11 — Performance, scalabilité et résilience
+
+**Objectifs pédagogiques :**
+- Identifier les goulots d’étranglement d’une application web.  
+- Connaître les patterns de performance et résilience.
+
+**Contenu :**
+- Load balancing, CDN  
+- Patterns de résilience : retry, circuit breaker, fallback  
+- Monitoring, observabilité (logs, metrics, traces)  
+
+**Travaux :**
+- Tests de charge et mise en place d’un reverse proxy Nginx
+
+---
+
+## 🧩 Partie 12 — Nouvelles tendances
+
+**Objectifs pédagogiques :**
+- Découvrir les architectures émergentes.  
+- Comprendre leurs cas d’usage et contraintes.
+
+**Contenu :**
+- Serverless et FaaS (AWS Lambda, Cloud Functions)  
+- Edge computing (Cloudflare Workers, Deno Deploy)  
+- Progressive Web Apps (PWA)  
+
+**Travaux :**
+- Déploiement d’une fonction serverless simple  
+- Création d’une PWA minimale
+
+---
+
+## 🧩 Partie 13 — Études de cas réelles
+
+**Objectifs pédagogiques :**
+- Analyser des architectures industrielles.  
+- Identifier les choix de conception et leurs compromis.
+
+**Contenu :**
+- Étude d’un e-commerce (scalabilité, sécurité, cache)  
+- Étude d’une messagerie temps réel  
+- Étude d’une plateforme vidéo (CDN, transcoding)
+
+**Travaux :**
+- Présentation orale : analyse d’une architecture réelle choisie par groupe
+
+---
+
+## 🧩 Partie 14 — Synthèse & perspectives
+
+**Objectifs pédagogiques :**
+- Faire le lien entre tous les concepts vus.  
+- Identifier les évolutions futures du Web.
+
+**Contenu :**
+- Récapitulatif des architectures vues  
+- WebAssembly, Edge computing, IA embarquée  
+- Conclusion : choix architecturaux selon contexte et contraintes
+
+**Évaluation finale :**
+- Projet fil rouge (application complète à présenter)  
+- Oral de synthèse (analyse critique d’une architecture)
+
+---
+
+## 🎓 Modalités d’évaluation
+
+| Évaluation | Pondération | Description |
+|-------------|-------------|--------------|
+| Mini-projets par partie | 40% | Exercices pratiques par thème |
+| Projet fil rouge | 40% | Conception d’une architecture complète |
+| Présentation orale | 20% | Étude de cas et soutenance |
+
+---
+
+## 📚 Ressources recommandées (avec liens)
+
+- **Martin Fowler – Patterns of Enterprise Application Architecture**  
+  - 🔗 [Site officiel](https://martinfowler.com/books/eaa.html)  
+  - 📖 [Amazon](https://www.amazon.com/Patterns-Enterprise-Application-Architecture-Martin/dp/0321127420)
+
+- **Sam Newman – Building Microservices (2ᵉ édition)**  
+  - 🔗 [Page auteur](https://samnewman.io/books/building_microservices_2nd_edition/)  
+  - 📖 [Amazon](https://www.amazon.com/Building-Microservices-Sam-Newman-ebook/dp/B09B5L4NVT)  
+  - 💻 [O’Reilly Online Edition](https://www.oreilly.com/library/view/building-microservices-2nd/9781492034018/)
+
+- **Mark Richards & Neal Ford – Fundamentals of Software Architecture**  
+  - 📖 [Amazon](https://www.amazon.com/Fundamentals-Software-Architecture-Comprehensive-Characteristics/dp/1492043451)  
+  - 💻 [O’Reilly Online Edition](https://www.oreilly.com/library/view/fundamentals-of-software/9781492043447/)
+
+- **Gregor Hohpe & Bobby Woolf – Enterprise Integration Patterns**  
+  - 🔗 [Site officiel](https://www.enterpriseintegrationpatterns.com/)  
+  - 📖 [Amazon](https://www.amazon.com/Enterprise-Integration-Patterns-Designing-Deploying/dp/0321200683)
+
+- **IETF RFC 7230–7235 (HTTP/1.1)**  
+  - 🌐 [RFC 7230 – Message Syntax and Routing](https://datatracker.ietf.org/doc/html/rfc7230)
+
+- **Mozilla Developer Network (MDN Web Docs)**  
+  - 🌐 [developer.mozilla.org](https://developer.mozilla.org)
+
+- **OWASP Web Security Testing Guide**  
+  - 🌐 [owasp.org/www-project-web-security-testing-guide](https://owasp.org/www-project-web-security-testing-guide/)
+
+---
+
