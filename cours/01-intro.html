@@ -33,4 +33,18 @@
     <script src="https://unpkg.com/reveal.js@5/dist/reveal.js"></script>
     <script src="https://unpkg.com/reveal.js@5/plugin/markdown/markdown.js"></script>
     <script src="https://unpkg.com/reveal.js@5/plugin/highlight/highlight.js"></script>
-    <script src="https://unpkg.com/reveal.
+    <script src="https://unpkg.com/reveal.js@5/plugin/notes/notes.js"></script>
+
+    <script>
+      Reveal.initialize({
+        hash: true,
+        slideNumber: true,
+        plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ],
+        controls: true,
+        progress: true,
+        center: true,
+        transition: 'slide'
+      });
+    </script>
+  </body>
+</html>
