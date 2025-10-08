@@ -219,7 +219,8 @@ curl -i -X OPTIONS   -H "Origin: https://example.org"   -H "Access-Control-Reque
 
 ## Partie suivante
 
-### Partie III — Architectures côté serveur
-- Serveurs web et frameworks back-end.  
-- Gestion de la persistance et de la sécurité.  
-- Introduction à la couche métier et aux API.  
+### Partie III — Les standards du Web
+- Comprendre le rôle fondamental de HTML, CSS et JavaScript dans le Web.
+- Manipuler la structure du DOM et les interactions client.
+- Identifier le cycle de vie d’une page web.
+- Poser les bases du développement front-end moderne.
