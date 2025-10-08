@@ -2,7 +2,7 @@
 <html lang="fr">
   <head>
     <meta charset="utf-8">
-    <title>Architecture des Applications Web — 01 · Introduction générale</title>
+    <title>Architecture des Applications Web — 02 · HTTP en profondeur</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <!-- Reveal.js core CSS -->
@@ -12,11 +12,11 @@
     <!-- Code syntax highlighting -->
     <link rel="stylesheet" href="https://unpkg.com/highlight.js@11.9.0/styles/github.min.css">
 
-    <!-- Compact style overrides -->
+    <!-- Compact style overrides (same as Part 1) -->
     <style>
       :root {
-        --r-main-font-size: 26px; /* default ~36px; reduce for compactness */
-        --r-block-margin: 12px;   /* default 20px */
+        --r-main-font-size: 26px;
+        --r-block-margin: 12px;
         --r-heading1-size: 1.8em;
         --r-heading2-size: 1.4em;
         --r-heading3-size: 1.2em;
@@ -27,15 +27,18 @@
       .reveal table { font-size: 0.85em; }
       .reveal section { padding: 10px; }
       .reveal .slides { width: 100%; }
-      /* Optional: slightly tighter code blocks */
       .reveal pre code { line-height: 1.25; font-size: 0.9em; }
+      .reveal code { font-size: 0.95em; }
+      /* Smaller columns helper */
+      .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+      @media (max-width: 1024px) { .cols { grid-template-columns: 1fr; } }
     </style>
   </head>
 
   <body>
     <div class="reveal">
       <div class="slides">
-        <section data-markdown="./01-intro.md"
+        <section data-markdown="./02-http.md"
                  data-separator="^---$"
                  data-separator-vertical="^--$"
                  data-separator-notes="^Note:"></section>
