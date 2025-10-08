@@ -117,3 +117,4 @@ des architectures d’applications web **efficaces, scalables et sécurisées**.
 - Structure des requêtes et réponses  
 - Méthodes, statuts, en-têtes  
 - Notion de statelessness  
+
