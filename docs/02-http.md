@@ -178,82 +178,102 @@ En cas d’erreur, le cache peut servir une version **stale**.
 
 ## HTTP/1.x — fonctionnement général (séquentiel)
 
-```mermaid
-sequenceDiagram
-    participant B as 🧭 Navigateur (Client)
-    participant S as 🖥️ Serveur Web
-
-    B->>S: 🔌 Connexion TCP (port 80 ou 443)
-    B->>S: 📤 Requête HTTP\nGET /index.html HTTP/1.1\n+ en-têtes + (body)
-    S-->>B: 📥 Réponse HTTP\nHTTP/1.1 200 OK\n+ en-têtes + (body)
-    B-->>S: 🔒 Fermeture ou maintien (keep-alive)
 ```
++--------------+                        +----------------+
+|   Client     |                        |    Serveur     |
+| (navigateur) |                        |  (web backend) |
++--------------+                        +----------------+
+        |                                       |
+        | 1️⃣ Connexion TCP (port 80/443).       |
+        |-------------------------------------->|
+        |                                       |
+        | 2️⃣ Requête HTTP (texte)               |
+        |   "GET /index.html HTTP/1.1".         |
+        |   + headers + body                    |
+        |-------------------------------------->|
+        |                                       |
+        | 3️⃣ Réponse HTTP                       |
+        |   "HTTP/1.1 200 OK"                   |
+        |   + headers + body                    |
+        |<--------------------------------------|
+        |                                       |
+        | 4️⃣ Fermeture ou maintien (keep-alive) |
+        |-------------------------------------->|
+```
+
 **Caractéristiques :**
-- 1 requête → 1 réponse, pas de multiplexage.  
-- En-têtes en **texte brut**, pipeline limité (HOL blocking).  
-- `Connection: keep-alive` pour réutiliser la connexion.  
+- Une requête → une réponse.  
+- Pipeline limité (1 requête à la fois par connexion TCP).  
+- En-têtes en **texte brut**.  
+- Connexions réutilisées via `Connection: keep-alive`.
 
 ---
 
 ## HTTP/2 — connexion unique multiplexée
 
-```mermaid
-sequenceDiagram
-    participant C as 🧭 Client (navigateur)
-    participant S as 🖥️ Serveur HTTP/2
-
-    C->>S: 🔒 TCP + TLS (connexion persistante unique)
-    Note over C,S: Multiplexage de plusieurs streams dans une seule connexion
-
-    C->>S: 📤 Stream #1 — GET /index.html
-    C->>S: 📤 Stream #2 — GET /style.css
-    C->>S: 📤 Stream #3 — GET /script.js
-
-    S-->>C: 📥 Stream #1 — HTML
-    S-->>C: 📥 Stream #2 — CSS
-    S-->>C: 📥 Stream #3 — JS
-
-    Note over C,S: Frames **binaires** + **HPACK** (compression des en-têtes)\nServer Push (optionnel)
 ```
++--------------+                           +----------------+
+|   Client     |                           |     Serveur    |
+| (navigateur) |                           |     HTTP/2     |
++--------------+                           +----------------+
+        |                                         |
+        | 🔒 Connexion unique (TCP + TLS)         |
+        |---------------------------------------->|
+        |                                         |
+        | 📤 Streams multiples :                  |
+        |    - Stream 1: GET /index.html          |
+        |    - Stream 2: GET /style.css           |
+        |    - Stream 3: GET /script.js           |
+        |---------------------------------------->|
+        |                                         |
+        | 📥 Réponses parallèles :                |
+        |    - Stream 1: HTML                     |
+        |    - Stream 2: CSS                      |
+        |    - Stream 3: JS                       |
+        |<----------------------------------------|
+        |                                         |
+        | Connexion persistante (binaire + HPACK) |
+```
+
 **Caractéristiques :**
-- Un seul TCP, **multiplexage** de flux parallèles.  
-- **Frames binaires**, **HPACK** pour les en-têtes.  
-- Réduit le HOL au niveau HTTP mais **reste** sensible au HOL de **TCP**.  
+- Une seule connexion TCP multiplexée.  
+- **Frames binaires** et **compression HPACK**.  
+- Réponses parallèles → meilleures performances.  
+- Possibilité de **Server Push** (envoi proactif de ressources).
 
 ---
 
-## HTTP/3 — QUIC (UDP) & 0‑RTT
+## HTTP/3 — sur QUIC (UDP)
 
-```mermaid
-sequenceDiagram
-    participant C as 🧭 Client (navigateur)
-    participant S as 🖥️ Serveur HTTP/3 (QUIC)
-
-    C->>S: 🚀 Connexion QUIC (UDP + TLS 1.3)
-    Note over C,S: Pas de TCP — flux indépendants, moins de HOL blocking
-
-    C->>S: 📤 Stream #1 — GET /index.html
-    C->>S: 📤 Stream #2 — GET /style.css
-    C->>S: 📤 Stream #3 — GET /script.js
-
-    S-->>C: 📥 Stream #1 — HTML
-    S-->>C: 📥 Stream #2 — CSS
-    S-->>C: 📥 Stream #3 — JS
-
-    Note over C,S: Handshake rapide, **0‑RTT** possible\nMigration de connexion, correction de pertes par flux
 ```
++--------------+                        +----------------+
+|   Client     |                        |    Serveur     |
+| (navigateur) |                        |  HTTP/3 (QUIC) |
++--------------+                        +----------------+
+        |                                       |
+        | 🚀 Connexion QUIC (UDP + TLS 1.3)     |
+        |-------------------------------------->|
+        |                                       |
+        | 📤 Flux indépendants :                |
+        |    - Stream 1: GET /index.html        |
+        |    - Stream 2: GET /style.css         |
+        |    - Stream 3: GET /script.js         |
+        |-------------------------------------->|
+        |                                       |
+        | 📥 Réponses simultanées :             |
+        |    - Stream 1: HTML                   |
+        |    - Stream 2: CSS                    |
+        |    - Stream 3: JS                     |
+        |<--------------------------------------|
+        |                                       |
+        | 🔁 Migration fluide, 0-RTT possible   |
+```
+
 **Caractéristiques :**
-- Basé sur **QUIC/UDP** : multiplexage **sans** HOL TCP.  
-- **TLS 1.3** intégré, reprise **0‑RTT**.  
-- Meilleures perfs en mobilité et réseaux instables.  
-
----
-
-## Observabilité et limitation de taux
-
-- Corrélation des requêtes via **Trace-ID**.  
-- Codes **429 Too Many Requests**, en-tête `Retry-After`.  
-- Idempotence côté client → retries sûrs.  
+- Basé sur **UDP** → pas de blocage TCP (*head-of-line blocking*).  
+- **TLS 1.3 intégré**, reprise rapide (0-RTT).  
+- **Multiplexage natif** et meilleure résilience réseau.  
+- Déployé sur Chrome, Cloudflare, YouTube, etc.
 
 ---
 
