@@ -140,7 +140,7 @@ Chaque fonctionnalité est un **service indépendant**, déployé séparément e
              | (SPA / Mobile App) |
              +--------------------+
                      │
-           ┌─────────┼──────────────────────────────────────┐
+           ┌─────────┼──────────────┬───────────────────────┐
            ▼         ▼              ▼                       ▼
    +------------+ +------------+ +------------+      +-------------+
    | Service A  | | Service B  | | Service C  | ...  | Service N   |
