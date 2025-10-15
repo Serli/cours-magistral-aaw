@@ -22,7 +22,40 @@
 
 ---
 
-## Message HTTP — Requête
+## HTTP/1.x — fonctionnement général (séquentiel)
+
+```
++--------------+                        +----------------+
+|   Client     |                        |    Serveur     |
+| (navigateur) |                        |  (web backend) |
++--------------+                        +----------------+
+        |                                       |
+        | 1️⃣ Connexion TCP (port 80/443).       |
+        |-------------------------------------->|
+        |                                       |
+        | 2️⃣ Requête HTTP (texte)               |
+        |   "GET /index.html HTTP/1.1".         |
+        |   + headers + body                    |
+        |-------------------------------------->|
+        |                                       |
+        | 3️⃣ Réponse HTTP                       |
+        |   "HTTP/1.1 200 OK"                   |
+        |   + headers + body                    |
+        |<--------------------------------------|
+        |                                       |
+        | 4️⃣ Fermeture ou maintien (keep-alive) |
+        |-------------------------------------->|
+```
+
+**Caractéristiques :**
+- Une requête → une réponse.  
+- Pipeline limité (1 requête à la fois par connexion TCP).  
+- En-têtes en **texte brut**.  
+- Connexions réutilisées via `Connection: keep-alive`.
+
+---
+
+## Message HTTP 1.X — Requête
 
 ```
 GET /api/users?limit=10 HTTP/1.1
@@ -37,7 +70,7 @@ User-Agent: curl/8.0
 
 ---
 
-## Message HTTP — Réponse
+## Message HTTP 1.X — Réponse
 
 ```
 HTTP/1.1 200 OK
@@ -77,69 +110,234 @@ ETag: "a1b2c3"
 
 ---
 
-## En-têtes essentiels (1/2)
+## 📬 En-têtes essentiels (1/2)
 
-- **Content-Type**, **Content-Length**, **Content-Encoding**  
-- **Accept**, **Accept-Language**, **Accept-Encoding**  
-- **Authorization**, **WWW-Authenticate**  
-- **User-Agent**, **Referer**, **Origin**
-
----
-
-## En-têtes essentiels (2/2)
-
-- **Cache-Control** (`no-store`, `max-age`, `s-maxage`)  
-- **ETag** / **If-None-Match**  
-- **Last-Modified** / **If-Modified-Since**  
-- **Vary** (`Accept`, `Origin`, etc.)  
-- **Location** (redirections, 201 Created)
+| En-tête | Type | Description |
+|----------|------|--------------|
+| **Content-Type** | 📤 *Réponse / Requête* | Type MIME du contenu (`text/html`, `application/json`, etc.) |
+| **Content-Length** | 📤 *Réponse / Requête* | Taille du corps (en octets). Absent si `Transfer-Encoding: chunked`. |
+| **Content-Encoding** | 📤 *Réponse* | Méthode de compression (`gzip`, `br`, `deflate`). |
+| **Accept** | 📥 *Requête* | Types MIME acceptés par le client. |
+| **Accept-Language** | 📥 *Requête* | Langues préférées (`fr-FR`, `en-US`, ...). |
+| **Accept-Encoding** | 📥 *Requête* | Méthodes de compression acceptées. |
+| **Authorization** | 📥 *Requête* | Jeton d’accès (`Bearer <token>`, `Basic ...`). |
+| **User-Agent** | 📥 *Requête* | Identifie le client (`Mozilla/5.0`, `curl/8.4.0`, etc.). |
+| **Referer** | 📥 *Requête* | URL de la page d’origine (pour analytics, sécurité). |
+| **Origin** | 📥 *Requête* | Origine de la requête (protocole + domaine + port), utilisée pour CORS. |
 
 ---
 
-## Négociation de contenu
+## 📬 En-têtes essentiels (2/2)
 
-- Le serveur choisit la représentation selon `Accept`, `Accept-Language`, etc.  
-- Réponse `200 OK` (représentation choisie) ou `406 Not Acceptable`.  
-- Bonnes pratiques : toujours fournir une **valeur par défaut**.  
+| En-tête | Type | Description |
+|----------|------|--------------|
+| **Cache-Control** | 📤 *Réponse* | Règles de cache (`no-store`, `max-age=60`, `s-maxage=300`). |
+| **ETag** | 📤 *Réponse* | Identifiant unique de la version d’une ressource. |
+| **If-None-Match** | 📥 *Requête* | Compare l’`ETag` pour valider le cache (→ `304 Not Modified`). |
+| **Last-Modified** | 📤 *Réponse* | Date de dernière modification. |
+| **If-Modified-Since** | 📥 *Requête* | Compare la date pour valider le cache (→ `304 Not Modified`). |
+| **Location** | 📤 *Réponse* | Redirection (`302 Found`, `301 Moved`), ou ressource créée (`201 Created`). |
+| **Set-Cookie** | 📤 *Réponse* | Définit un cookie côté client. |
+| **Cookie** | 📥 *Requête* | Envoie les cookies vers le serveur. |
+
 
 ---
 
-## Caching HTTP — Bases
+## 🧭 Négociation de contenu — principe général
 
-- **Cache-Control** : `max-age`, `public`, `private`, `no-store`.  
-- **Validation** : `ETag` + `If-None-Match` → `304 Not Modified`.  
-- **Heuristique** : si pas d’expiration, via `Last-Modified`.  
-- **CDN** : directives `s-maxage`, `stale-while-revalidate`, `stale-if-error`.  
+Une **même ressource** peut avoir **plusieurs représentations** :  
+- format (`application/json`, `application/xml`, `text/html`, etc.)  
+- langue (`fr`, `en`, `es`...)  
+- encodage (`gzip`, `br`, etc.)
 
----
-
-## Caching — Exemple
+👉 Le client exprime ses **préférences** avec des en-têtes `Accept-*`.  
+👉 Le serveur choisit la **meilleure représentation** disponible.
 
 ```
-Cache-Control: public, max-age=300, stale-while-revalidate=30
-ETag: "v42"
+Client                                              Serveur
+───────                                             ────────
+   │ GET /users/42                                     │
+   │ Accept: application/json, application/xml;q=0.8.  │
+   │ Accept-Language: fr, en;q=0.7                     │
+   │ ────────────────────────────────────────────────▶ │
+   │                                                   │ Choisit JSON (priorité 1.0)
+   │ ◀──────────────────────────────────────────────── │
+   │                   HTTP/1.1 200 OK                 │
+   │                   Content-Type: application/json  │
+   │                   Content-Language: fr            │
 ```
-
-→ Le client peut réutiliser la ressource pendant 5 min,  
-puis la **revalider** avec le serveur.  
-En cas d’erreur, le cache peut servir une version **stale**.  
 
 ---
 
-## Conditionnels et concurrence
+## 📦 Exemple — même ressource, deux formats possibles
 
-- **Préconditions** : `If-Match`, `If-Unmodified-Since`.  
-- Évitent les écrasements concurrents.  
-- Réponse : **412 Precondition Failed** si conflit.  
-- Pattern courant : lecture `ETag` → écriture avec `If-Match`.  
+### Requête du client
+```
+GET /users/42 HTTP/1.1
+Host: api.example.com
+Accept: application/json, application/xml;q=0.8
+```
+
+### Réponse possible (JSON)
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{"id":42,"name":"Alice"}
+```
+
+### Réponse alternative (XML)
+```
+HTTP/1.1 200 OK
+Content-Type: application/xml
+
+<user><id>42</id><name>Alice</name></user>
+```
+
+➡️ Le serveur choisit selon la **préférence du client** (`q` = *quality factor*).  
+➡️ `q=1.0` = priorité haute ; `q=0.8` = secondaire.
+
+---
+
+## ⚙️ Pondération des préférences (`q`)
+
+### Exemple
+```
+Accept: text/html, application/json;q=0.9, */*;q=0.5
+```
+
+| Format demandé | Qualité (`q`) | Interprétation |
+|----------------|----------------|----------------|
+| `text/html` | 1.0 | préféré |
+| `application/json` | 0.9 | accepté |
+| `*/*` | 0.5 | fallback (tout format sinon) |
+
+➡️ Si le serveur ne peut fournir **aucun format compatible** :  
+`HTTP/1.1 406 Not Acceptable`
+
+---
+
+## 🌍 Négociation de langue (`Accept-Language`)
+
+```
+GET /page HTTP/1.1
+Accept-Language: fr, en;q=0.8
+```
+
+| Ressource disponible | Résultat |
+|----------------------|-----------|
+| `/page.fr.html`      | ✅ Servie |
+| `/page.en.html`      | fallback  |
+| aucune dispo         | ❌ 406 Not Acceptable |
+
+---
+
+## 🧰 Caching HTTP — l’essentiel
+
+- **Pourquoi ?** Réduire la latence et la charge serveur.
+- **Où ?** Navigateur, proxy/CDN, reverse-proxy, application.
+- **Deux approches :**
+  - **Expiration** : on peut réutiliser sans demander au serveur (ex. `max-age`).
+  - **Validation** : on demande “est-ce toujours frais ?” (ex. `ETag`, `If-None-Match`).
+
+---
+
+## 🧾 En-têtes clés (vue simple)
+
+- **Cache-Control** (réponse) : règles d’expiration/partage  
+  `max-age=60`, `s-maxage=300` (CDN), `public`/`private`, `no-store`, `no-cache`, `must-revalidate`
+- **ETag** (réponse) : identifiant de version (hash) de la ressource
+- **Last-Modified** (réponse) : date de dernière modification
+- **If-None-Match** (requête) : “donne 304 si ETag identique”
+- **If-Modified-Since** (requête) : “donne 304 si pas modifié depuis”
+- **Age** (réponse) : âge (en s) de l’objet dans le cache intermédiaire
+
+---
+
+## ⏳ Expiration — exemple
+
+Réponse cacheable pendant 10 minutes :
+
+```
+HTTP/1.1 200 OK
+Cache-Control: public, max-age=600
+Content-Type: text/css
+
+/* styles.css ... */
+```
+
+➡️ Pendant 10 min, le navigateur/ CDN répond **sans** recontacter le serveur.
+
+---
+
+## 🔁 Validation avec ETag — séquence simple
+
+### 1) Premier accès (pas de cache local)
+```
+Client                          Serveur
+│ GET /users/42                ──▶ │
+│                                  │ génère ETag "abc123"
+│ ◀─────────────────────────────── │ HTTP/1.1 200 OK
+│                                  │ ETag: "abc123"
+│ (stocke la réponse + ETag)       │
+```
+
+### 2) Accès suivant (validation)
+```
+Client                          Serveur
+│ GET /users/42               ──▶ │
+│ If-None-Match: "abc123"         │ compare ETag
+│ ◀────────────────────────────── │ HTTP/1.1 304 Not Modified
+│                                 │ (pas de corps)
+```
+
+➡️ **304** = réutiliser la copie locale (économie de bande passante).
+
+---
+
+## 💡 ETag vs Last-Modified
+
+- **ETag** : précis, change au moindre octet → idéal pour APIs/JSON.
+- **Last-Modified** : simple, mais granularity = 1 seconde et dépend de l’horloge.
+
+---
+
+## ✍️ Contrôle de concurrence (If-Match) — éviter d’écraser des modifs
+
+### Cas A — ETag à jour ⇒ mise à jour acceptée
+```
+Client                          Serveur
+│ GET /users/42               ──▶ │
+│ ◀────────────────────────────── │ 200 OK
+│ (reçoit ETag "abc123")          │
+
+│ PUT /users/42               ──▶ │
+│ If-Match: "abc123"              │ ETag stocké = "abc123" → OK
+│ { "name": "Alice X" }           │ met à jour, nouveau ETag "def456"
+│ ◀────────────────────────────── │ 200 OK
+│                                 │ ETag: "def456"
+```
+
+### Cas B — ETag périmé ⇒ rejet (prévention d’écrasement)
+```
+Client                          Serveur
+│ PUT /users/42               ──▶ │
+│ If-Match: "abc123"              │ ETag stocké = "def456" → conflit
+│ { "name": "Alice Y" }           │
+│ ◀────────────────────────────── │ 412 Precondition Failed
+```
+
+➡️ `If-Match` = “ne mets à jour **que si** la version n’a pas changé”.
 
 ---
 
 ## Sécurité du transport — HTTPS / TLS
 
-- **HTTPS = HTTP + TLS** : confidentialité, intégrité, authenticité.  
+- **HTTPS = TLS + HTTP** : confidentialité, intégrité, authenticité.  
 - **HSTS** (`Strict-Transport-Security`) pour forcer HTTPS.  
 - Certificats, chaînes de confiance, renouvellement (ACME / Let’s Encrypt).  
+
+_(Cette partie sera détaillée plus tard)_
 
 ---
 
@@ -148,11 +346,12 @@ En cas d’erreur, le cache peut servir une version **stale**.
 - `Set-Cookie` : options `Secure`, `HttpOnly`, `SameSite` (Lax / Strict / None).  
 - Sessions côté serveur : ID stocké en cookie.  
 - **JWT** portés côté client (`Authorization: Bearer ...`).  
-  ⚠️ Attention à la **révocation** et à la **durée de vie**.  
+
+_(Cette partie sera détaillée plus tard)_
 
 ---
 
-## CORS — Cross-Origin Resource Sharing
+## 🌐 CORS — Cross-Origin Resource Sharing
 
 - Définit qui peut appeler une ressource depuis un autre domaine.  
 - **Simple request** ou **preflight (OPTIONS)**.  
@@ -164,48 +363,88 @@ En cas d’erreur, le cache peut servir une version **stale**.
 
 ---
 
-## HTTP/1.1 vs HTTP/2 vs HTTP/3
+## 🌐 CORS — principe général
 
-| Version | Transport | Caractéristiques clés |
-|----------|------------|------------------------|
-| HTTP/1.1 | TCP | Keep-alive, 1 flux / connexion |
-| HTTP/2 | TCP | Multiplexage, HPACK, binaire |
-| HTTP/3 | QUIC (UDP) | TLS intégré, démarrage rapide, résilient |
+CORS permet à un navigateur de **demander une ressource depuis un autre domaine**,  
+tout en respectant la **politique de même origine** (*Same-Origin Policy*).
 
-→ Gains majeurs en **latence** et **performances mobiles**.  
+```
+Origine = schéma + domaine + port
+
+http://example.com      ≠     https://example.com
+http://app.local:3000   ≠     http://api.local:8080
+```
+
+➡️ Sans CORS, les requêtes inter-origines sont **bloquées par le navigateur**.  
+➡️ Avec CORS, le **serveur distant autorise explicitement** certains domaines.
 
 ---
 
-## HTTP/1.x — fonctionnement général (séquentiel)
+## 🔁 CORS — requête simple
 
 ```
-+--------------+                        +----------------+
-|   Client     |                        |    Serveur     |
-| (navigateur) |                        |  (web backend) |
-+--------------+                        +----------------+
-        |                                       |
-        | 1️⃣ Connexion TCP (port 80/443).       |
-        |-------------------------------------->|
-        |                                       |
-        | 2️⃣ Requête HTTP (texte)               |
-        |   "GET /index.html HTTP/1.1".         |
-        |   + headers + body                    |
-        |-------------------------------------->|
-        |                                       |
-        | 3️⃣ Réponse HTTP                       |
-        |   "HTTP/1.1 200 OK"                   |
-        |   + headers + body                    |
-        |<--------------------------------------|
-        |                                       |
-        | 4️⃣ Fermeture ou maintien (keep-alive) |
-        |-------------------------------------->|
+Client (frontend)
+Origin: https://app.example.com
+        │
+        │ GET /data
+        ▼
++-------------------------------+
+|  Serveur API (api.example.com)|
++-------------------------------+
+        │
+        │ Access-Control-Allow-Origin: https://app.example.com
+        │ Access-Control-Allow-Methods: GET
+        ▼
+Réponse acceptée ✅
 ```
 
-**Caractéristiques :**
-- Une requête → une réponse.  
-- Pipeline limité (1 requête à la fois par connexion TCP).  
-- En-têtes en **texte brut**.  
-- Connexions réutilisées via `Connection: keep-alive`.
+**Simple request :**  
+- Méthode = `GET`, `HEAD` ou `POST` (avec `application/x-www-form-urlencoded`, `multipart/form-data`, `text/plain`).  
+- Pas de pré-vérification `OPTIONS`.  
+- Le navigateur laisse passer si le header `Access-Control-Allow-Origin` correspond à l’origine de la page.
+
+---
+
+## 🧭 CORS — pré-vérification (preflight)
+
+Pour les requêtes **non simples** (méthodes PUT, DELETE, JSON custom, headers spéciaux) :
+
+```
+Client (navigateur)
+Origin: https://app.example.com
+        │
+        │ ──▶ OPTIONS /users/42
+        │      Access-Control-Request-Method: PUT
+        │      Access-Control-Request-Headers: Content-Type, Authorization
+        │
+        ▼
++-------------------------------+
+| Serveur API (api.example.com) |
++-------------------------------+
+        │
+        │ ◀── 200 OK
+        │     Access-Control-Allow-Origin: https://app.example.com
+        │     Access-Control-Allow-Methods: GET, POST, PUT
+        │     Access-Control-Allow-Headers: Content-Type, Authorization
+        │     Access-Control-Max-Age: 600
+        ▼
+Navigateur envoie ensuite la vraie requête PUT ✅
+```
+
+---
+
+## 🧱 Résumé — rôles navigateur et serveur
+
+| Étape | Acteur | Action |
+|-------|---------|--------|
+| 1️⃣ | Navigateur | Vérifie les en-têtes et les origines |
+| 2️⃣ | Serveur | Répond avec `Access-Control-Allow-*` |
+| 3️⃣ | Navigateur | Autorise ou bloque la requête |
+| 4️⃣ | (Optionnel) | `Access-Control-Max-Age` pour éviter plusieurs preflights |
+
+**Important :**
+- CORS est **appliqué côté navigateur**, jamais côté serveur.  
+- Les outils comme `curl` ou Postman **ne sont pas concernés**.
 
 ---
 
@@ -243,37 +482,134 @@ En cas d’erreur, le cache peut servir une version **stale**.
 
 ---
 
-## HTTP/3 — sur QUIC (UDP)
+## Message HTTP/2 — Concepts clés
 
+- Les messages HTTP/2 ne sont **plus textuels** mais **binaires**.  
+- Les requêtes et réponses sont découpées en **frames** (trames).  
+- Plusieurs flux peuvent coexister sur **une seule connexion TCP**.  
+
+**Types de frames les plus courants :**
+| Type | Description |
+|------|--------------|
+| `HEADERS` | Contient les en-têtes compressés (HPACK) |
+| `DATA` | Contient le corps du message |
+| `SETTINGS` | Négociation entre client et serveur |
+| `RST_STREAM` | Annule un flux en cours |
+| `PING` | Vérifie la latence de la connexion |
+
+---
+
+## Exemple — Requête et réponse HTTP/2 (vue logique)
+
+### Requête (stream 1)
 ```
-+--------------+                        +----------------+
-|   Client     |                        |    Serveur     |
-| (navigateur) |                        |  HTTP/3 (QUIC) |
-+--------------+                        +----------------+
-        |                                       |
-        | 🚀 Connexion QUIC (UDP + TLS 1.3)     |
-        |-------------------------------------->|
-        |                                       |
-        | 📤 Flux indépendants :                |
-        |    - Stream 1: GET /index.html        |
-        |    - Stream 2: GET /style.css         |
-        |    - Stream 3: GET /script.js         |
-        |-------------------------------------->|
-        |                                       |
-        | 📥 Réponses simultanées :             |
-        |    - Stream 1: HTML                   |
-        |    - Stream 2: CSS                    |
-        |    - Stream 3: JS                     |
-        |<--------------------------------------|
-        |                                       |
-        | 🔁 Migration fluide, 0-RTT possible   |
+:method: GET
+:scheme: https
+:authority: api.example.com
+:path: /users?limit=10
+accept: application/json
+user-agent: curl/8.4.0
 ```
 
-**Caractéristiques :**
-- Basé sur **UDP** → pas de blocage TCP (*head-of-line blocking*).  
-- **TLS 1.3 intégré**, reprise rapide (0-RTT).  
-- **Multiplexage natif** et meilleure résilience réseau.  
-- Déployé sur Chrome, Cloudflare, YouTube, etc.
+➡️ Les pseudo-en-têtes `:` remplacent la ligne de requête.  
+➡️ Envoi via une **frame HEADERS**, suivie éventuellement de **DATA**.
+
+---
+
+### Réponse (stream 1)
+```
+:status: 200
+content-type: application/json
+cache-control: max-age=60
+etag: "xyz123"
+
+{"items":[...]} 
+```
+
+➡️ Les métadonnées arrivent dans une **frame HEADERS**.  
+➡️ Le corps JSON est fragmenté en une ou plusieurs **frames DATA**.  
+➡️ Plusieurs réponses (streams) peuvent voyager simultanément sur une seule connexion.
+
+---
+
+## 🔀 Multiplexage HTTP/2 — Illustration
+
+### Une seule connexion TCP, plusieurs flux simultanés
+```
+Connexion TCP unique
+───────────────────────────────────────────────────────
+| Stream 1 |███ HEADERS ███ DATA ██████████           |
+| Stream 2 |     █ HEADERS ███ DATA ██████████        |
+| Stream 3 |          █ HEADERS ███ DATA ██████       |
+───────────────────────────────────────────────────────
+```
+
+- Chaque flux (`stream`) transporte une requête/réponse indépendante.  
+- Les trames sont intercalées dans le flux binaire global.  
+- Le protocole conserve l’ordre logique de chaque flux côté client/serveur.  
+- Résultat : **moins de latence** et **une seule connexion TLS** partagée.
+
+---
+
+## Message HTTP/3 — Concepts clés
+
+- Basé sur le protocole **QUIC**, lui-même construit sur **UDP**.  
+- Reprend la sémantique de HTTP/2 (frames, multiplexage, pseudo-en-têtes).  
+- Supprime les blocages liés à TCP (*head-of-line blocking*).  
+- Intègre directement **TLS 1.3** dans QUIC (pas de handshake séparé).  
+
+**Caractéristiques principales :**
+| Élément | Description |
+|----------|--------------|
+| ✅ Multiplexage natif | Flux indépendants, sans interblocage |
+| 🔒 Sécurité intégrée | TLS 1.3 embarqué dans QUIC |
+| 🚀 Démarrage rapide | Connexion en 1 RTT (ou 0 RTT en reprise) |
+| 🌍 Mobilité | Connexion conservée même si l’adresse IP change (roaming) |
+
+---
+
+## Exemple — Requête et réponse HTTP/3 (vue logique)
+
+### Requête (stream 1)
+```
+:method: GET
+:scheme: https
+:authority: api.example.com
+:path: /users?limit=10
+accept: application/json
+user-agent: curl/8.4.0 (HTTP/3)
+```
+
+➡️ Même structure logique que HTTP/2, mais envoyée via **QUIC stream**.  
+➡️ Pas de TCP handshake — cryptage et transport combinés.  
+
+---
+
+### Réponse (stream 1)
+```
+:status: 200
+content-type: application/json
+cache-control: max-age=60
+etag: "qwe789"
+
+{"items":[...]}
+```
+
+➡️ Chaque flux HTTP/3 voyage dans un **flux QUIC indépendant**.  
+➡️ Si un flux subit une perte de paquet, les autres continuent sans attente.  
+➡️ Le protocole gère la retransmission et le chiffrement au niveau QUIC.  
+
+---
+
+## HTTP/1.1 vs HTTP/2 vs HTTP/3
+
+| Version | Transport | Caractéristiques clés |
+|----------|------------|------------------------|
+| HTTP/1.1 | TCP | Keep-alive, 1 flux / connexion |
+| HTTP/2 | TCP | Multiplexage, HPACK, binaire |
+| HTTP/3 | QUIC (UDP) | TLS intégré, démarrage rapide, résilient |
+
+→ Gains majeurs en **latence** et **performances mobiles**.  
 
 ---
 
