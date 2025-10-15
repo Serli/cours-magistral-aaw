@@ -33,6 +33,75 @@
 
 ---
 
+## ⚙️ Scalabilité — Principe général
+
+La **scalabilité** désigne la capacité d’un système à **s’adapter à la charge**  
+(en augmentant ses ressources ou le nombre de serveurs).
+
+Deux grands types :
+
+| Type de scalabilité | Principe  | Exemple  |
+|---------------------|-----------|----------|
+| 🧱 **Verticale**     | On rend une machine plus puissante | + CPU, + RAM |
+| 🕸️ **Horizontale**   | On ajoute plusieurs machines | cluster, load balancer |
+
+**Objectif :** maintenir les performances quand la charge augmente  
+(sans dégrader la disponibilité ni exploser les coûts).
+
+---
+
+## 🧱 Scalabilité verticale (scale-up)
+
+### Principe
+Augmenter la puissance d’un **nœud unique**.
+
+```
+Avant :                        Après :
++--------------------+        +----------------------+
+|   Serveur unique   |        |   Même serveur       |
+|  2 vCPU, 4 Go RAM  |        |  16 vCPU, 64 Go RAM  |
++--------------------+        +----------------------+
+```
+
+**Avantages :**
+- Simple à mettre en place.  
+- Pas de modification logicielle.  
+
+**Limites :**
+- Coût élevé des grosses machines.  
+- Seuil physique maximal.  
+- Risque de **single point of failure**.
+
+---
+
+## 🕸️ Scalabilité horizontale (scale-out)
+
+### Principe
+Ajouter plusieurs serveurs **en parallèle** pour répartir la charge.
+
+```
+            +------------------+
+            |  Load Balancer   |
+            +--------▲---------+
+                     │
+   ┌-----------------┼---------------┐
+   ▼                 ▼               ▼
++---------+     +---------+     +---------+
+| Serveur |     | Serveur |     | Serveur |
+|   #1    |     |   #2    |     |   #3    |
++---------+     +---------+     +---------+
+```
+
+**Avantages :**
+- Scalabilité quasi illimitée.  
+- Résilience accrue (tolérance aux pannes).  
+
+**Limites :**
+- Complexité de synchronisation et de cohérence.  
+- Gestion du **state** (sessions, cache) plus difficile.
+
+---
+
 ## L’évolution des architectures Web
 
 | Période | Modèle dominant | Exemple | Caractéristiques |
@@ -192,14 +261,56 @@ Le code est découpé en **fonctions autonomes** exécutées **à la demande**, 
 
 ---
 
+### Edge computing
+- Exécution **au plus près des utilisateurs** (serveurs “en périphérie”).  
+- Réduction de la **latence** et du **trafic vers le cloud**.  
+- Déploiement distribué (PoP, CDN, zones géographiques).  
+- Moins de persistance locale, mais grande rapidité.  
+
+---
+
+## 🌍 Architecture Edge Computing
+
+### Principe
+Certaines logiques ou fonctions sont exécutées **sur des serveurs périphériques**  
+(CDN, PoP, terminaux IoT) **plutôt que dans le cloud central**.
+
+```
++-------------------------------+
+|       Cloud central           |
+|  (Bases, backend, analytics)  |
++---------------▲---------------+
+                │
+        Synchronisation
+                │
+      ┌─────────┴───────────────┐
+      ▼                         ▼
++-------------+         +-------------+
+|  Edge Node  |         |  Edge Node  |
+|  - Cache    |         |  - Auth     |
+|  - Routing  |         |  - API log. |
++-------------+         +-------------+
+      ▲                         ▲
+      │                         │
+      └── Utilisateurs finaux ──┘
+```
+
+**Caractéristiques :**
+- Réduit la latence et les coûts de transfert.  
+- Améliore la résilience et la rapidité perçue.  
+- Exemple : Cloudflare Workers, AWS Lambda@Edge, Deno Deploy.
+
+---
+
 ## 🧠 En résumé
 
-| Modèle          | Points forts                     | Limites principales               |
-|-----------------|----------------------------------|-----------------------------------|
-| Monolithique    | Simplicité, cohérence            | Difficulté d’évolution            |
-| N-tiers         | Modularité, séparation logique   | Couplage entre couches            |
-| Microservices   | Scalabilité, résilience          | Complexité, supervision difficile |
-| Serverless      | Élasticité, coût à l’usage       | Moins de contrôle, cold start     |
+| Modèle          | Points forts                        | Limites principales                  |
+|-----------------|-------------------------------------|--------------------------------------|
+| Monolithique    | Simplicité, cohérence               | Difficulté d’évolution               |
+| N-tiers         | Modularité, séparation logique      | Couplage entre couches               |
+| Microservices   | Scalabilité, résilience             | Complexité, supervision difficile    |
+| Serverless      | Élasticité, coût à l’usage          | Moins de contrôle, cold start        |
+| Edge Computing  | Latence minimale, proximité client  | Ressources limitées, persistance réduite |
 
 ---
 
@@ -211,6 +322,30 @@ Chaque modèle implique des choix :
 - **Complexité** vs **flexibilité**  
 - **Coût** vs **performance**  
 - **Vitesse de développement** vs **maintenabilité**
+
+---
+
+## Retours d'expérience
+
+> Comment construire une licorne sur un monolithe
+>
+> (N. Domenjoud & N. De Nayer - Doctolib)
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ui_FlkhtxRE?si=aXSXE0pF420e5ODM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+[Devoxx France 2019]
+
+---
+
+## Retours d'expérience
+
+> Comment le COVID a révolutionné Doctolib
+>
+> (D.Gageot / N.De Nayer)
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/uo73C2ck1aU?si=dxWkcHfLDqd2zZLg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+[Devoxx France 2021]
 
 ---
 
