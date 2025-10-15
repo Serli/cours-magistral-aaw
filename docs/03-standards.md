@@ -161,11 +161,39 @@ h1 {
 ## Les standards du Web et le W3C
 
 - **W3C (World Wide Web Consortium)** : définit les spécifications HTML, CSS, DOM, etc.  
-- **WHATWG** : maintient les standards “vivants” (HTML Living Standard).  
+- **WHATWG** (Working Group) : maintient les standards “vivants” (HTML Living Standard).  
 - Objectif : interopérabilité entre navigateurs.  
 - Références :  
   - [https://html.spec.whatwg.org/](https://html.spec.whatwg.org/)  
   - [https://www.w3.org/](https://www.w3.org/)  
+
+---
+
+## 🌍 Can I use — compatibilité des standards du Web
+
+**Objectif :** savoir si une technologie web (HTML, CSS, JS, API)  
+est **prise en charge par les navigateurs**.
+
+🔗 [https://caniuse.com](https://caniuse.com)
+
+---
+
+### 🧭 Exemple : `CSS grid`
+
+```
+https://caniuse.com/css-grid
+```
+
+| Navigateur | Support | Version minimale |
+|-------------|----------|------------------|
+| Chrome | ✅ | 57+ |
+| Firefox | ✅ | 52+ |
+| Safari | ✅ | 10.1+ |
+| Edge | ✅ | 16+ |
+| IE | ❌ | — |
+
+➡️ Permet de vérifier avant d’utiliser une **nouvelle propriété CSS ou API JS**.  
+➡️ Indique aussi les **préfixes** (`-webkit-`, `-moz-`, etc.) si nécessaires.
 
 ---
 
