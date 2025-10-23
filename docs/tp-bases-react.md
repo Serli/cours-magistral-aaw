@@ -76,6 +76,37 @@ my-app/
 
 ---
 
+## 🧩 ReactDOM
+
+Dans un projet React le point d’entrée se trouve souvent dans `src/main.jsx` :
+
+```jsx
+// main.jsx
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.jsx";
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+```
+
+```
+index.html
+└── <div id="root"></div>   ← React s’y monte
+```
+
+- `ReactDOM.createRoot(...)` : crée la racine React. 
+- `.render(<App />)` : monte le composant racine dans le **DOM réel**.  
+- `<React.StrictMode>` : active des vérifications supplémentaires en dev.  
+- `document.getElementById("root")` : élément HTML où l’app s’affiche.
+
+> React **ne remplace pas tout le HTML** : il s’insère dans un élément existant, puis gère cette zone via le **Virtual DOM**.
+
+---
+
 ## 🧱 Composants fonctionnels
 
 ```jsx
