@@ -207,15 +207,6 @@ https://caniuse.com/css-grid
 
 ---
 
-## Travaux pratiques
-
-🎯 **Objectif :** créer une page interactive simple en HTML, CSS et JS pur.  
-- Afficher une carte d’utilisateur avec nom, avatar et bouton “Like”.  
-- Stocker le compteur dans `localStorage`.  
-- Soigner la mise en page responsive.  
-
----
-
 ## Partie suivante
 
 ### Partie IV — Gestion de l’état et communication client-serveur

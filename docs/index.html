@@ -5,127 +5,80 @@
   <title>Architecture des Applications Web – Master Informatique</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: "Inter", system-ui, sans-serif;
-      background: #fafafa;
-      color: #222;
-      margin: 0;
-      padding: 40px 20px;
-      line-height: 1.4;
-    }
-    h1 {
-      text-align: center;
-      font-size: 1.8em;
-      margin-bottom: 1em;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 20px;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    a.card {
-      display: block;
-      text-decoration: none;
-      background: white;
-      border-radius: 12px;
-      padding: 18px 20px;
-      border: 1px solid #ddd;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-      transition: all 0.2s ease-in-out;
-    }
-    a.card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
-      border-color: #999;
-    }
-    .part {
-      font-weight: 600;
-      color: #111;
-      margin-bottom: 4px;
-    }
-    .title {
-      color: #555;
-      font-size: 0.95em;
-    }
-    footer {
-      text-align: center;
-      margin-top: 3em;
-      font-size: 0.85em;
-      color: #888;
-    }
-  </style>
+  <link href="./css/style.css" rel="stylesheet">
 </head>
 <body>
-  <h1>🧩 Architecture des Applications Web – Master Informatique</h1>
+  <main>
+    <h1>Architecture des Applications Web – Master Informatique</h1>
 
-  <div class="grid">
-    <a class="card" href="01-intro.html">
-      <div class="part">Partie 1</div>
-      <div class="title">Introduction & enjeux du Web moderne</div>
-    </a>
-    <a class="card" href="02-http.html">
-      <div class="part">Partie 2</div>
-      <div class="title">Le protocole HTTP en profondeur</div>
-    </a>
-    <a class="card" href="03-standards.html">
-      <div class="part">Partie 3</div>
-      <div class="title">Les standards du Web (HTML, CSS, JS)</div>
-    </a>
-    <a class="card" href="04-etat.html">
-      <div class="part">Partie 4</div>
-      <div class="title">Gestion de l’état & communication client-serveur</div>
-    </a>
-    <a class="card" href="05-serveur.html">
-      <div class="part">Partie 5</div>
-      <div class="title">Architectures côté serveur</div>
-    </a>
-    <a class="card" href="06-client.html">
-      <div class="part">Partie 6</div>
-      <div class="title">Architectures côté client (SPA, SSR, SSG)</div>
-    </a>
-    <a class="card" href="07-rest.html">
-      <div class="part">Partie 7</div>
-      <div class="title">Les APIs REST</div>
-    </a>
-    <a class="card" href="08-alternatives.html">
-      <div class="part">Partie 8</div>
-      <div class="title">Alternatives à REST : GraphQL, WebSockets</div>
-    </a>
-    <a class="card" href="09-microservices.html">
-      <div class="part">Partie 9</div>
-      <div class="title">Microservices & communication distribuée</div>
-    </a>
-    <a class="card" href="10-conteneurs.html">
-      <div class="part">Partie 10</div>
-      <div class="title">Conteneurisation & orchestration</div>
-    </a>
-    <a class="card" href="11-performance.html">
-      <div class="part">Partie 11</div>
-      <div class="title">Performance, scalabilité & résilience</div>
-    </a>
-    <a class="card" href="12-tendances.html">
-      <div class="part">Partie 12</div>
-      <div class="title">Nouvelles tendances (Serverless, Edge, PWA)</div>
-    </a>
-    <a class="card" href="13-cas.html">
-      <div class="part">Partie 13</div>
-      <div class="title">Études de cas réelles</div>
-    </a>
-    <a class="card" href="14-synthese.html">
-      <div class="part">Partie 14</div>
-      <div class="title">Synthèse & perspectives</div>
-    </a>
-    <a class="card" href="ia-warning.html">
-      <div class="part">⚠️ Point d'attention</div>
-      <div class="title">Utilisation de l’IA générative</div>
-    </a>
-  </div>
+    <h2>🎓 Cours magistral</h2>
+
+    <div class="grid">
+      <a class="card" href="01-intro.html">
+        <div class="part">Partie 1</div>
+        <div class="title">Introduction & enjeux du Web moderne</div>
+      </a>
+      <a class="card" href="02-http.html">
+        <div class="part">Partie 2</div>
+        <div class="title">Le protocole HTTP en profondeur</div>
+      </a>
+      <a class="card" href="03-standards.html">
+        <div class="part">Partie 3</div>
+        <div class="title">Les standards du Web (HTML, CSS, JS)</div>
+      </a>
+      <a class="card" href="04-etat.html">
+        <div class="part">Partie 4</div>
+        <div class="title">Gestion de l’état & communication client-serveur</div>
+      </a>
+      <a class="card" href="05-serveur.html">
+        <div class="part">Partie 5</div>
+        <div class="title">Architectures côté serveur</div>
+      </a>
+      <a class="card" href="06-client.html">
+        <div class="part">Partie 6</div>
+        <div class="title">Architectures côté client (SPA, SSR, SSG)</div>
+      </a>
+      <a class="card" href="07-rest.html">
+        <div class="part">Partie 7</div>
+        <div class="title">Les APIs REST</div>
+      </a>
+      <a class="card" href="08-alternatives.html">
+        <div class="part">Partie 8</div>
+        <div class="title">Alternatives à REST : GraphQL, WebSockets</div>
+      </a>
+      <a class="card" href="09-microservices.html">
+        <div class="part">Partie 9</div>
+        <div class="title">Microservices & communication distribuée</div>
+      </a>
+      <a class="card" href="10-conteneurs.html">
+        <div class="part">Partie 10</div>
+        <div class="title">Conteneurisation & orchestration</div>
+      </a>
+      <a class="card" href="11-performance.html">
+        <div class="part">Partie 11</div>
+        <div class="title">Performance, scalabilité & résilience</div>
+      </a>
+      <a class="card" href="12-tendances.html">
+        <div class="part">Partie 12</div>
+        <div class="title">Nouvelles tendances (Serverless, Edge, PWA)</div>
+      </a>
+      <a class="card" href="13-cas.html">
+        <div class="part">Partie 13</div>
+        <div class="title">Études de cas réelles</div>
+      </a>
+      <a class="card" href="14-synthese.html">
+        <div class="part">Partie 14</div>
+        <div class="title">Synthèse & perspectives</div>
+      </a>
+    </div>
+
+    <div class="links">
+      <a href="/travaux-pratiques">🧪 Aller aux Travaux Pratiques</a>
+    </div>
+  </main>
 
   <footer>
-    Master Informatique — Cours "Architecture des Applications Web"
+    Master Informatique — "Architecture des Applications Web"
   </footer>
 </body>
 </html>
