@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <title>Architecture des Applications Web — TP 2 · API TODO Express + SQLite</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- Reveal.js core CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/reveal.js@5/dist/reveal.css">
+    <link rel="stylesheet" href="https://unpkg.com/reveal.js@5/dist/theme/white.css" id="theme">
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="https://unpkg.com/highlight.js@11.9.0/styles/github.min.css">
+
+    <!-- Compact style overrides -->
+    <style>
+      :root {
+        --r-main-font-size: 26px;
+        --r-block-margin: 12px;
+        --r-heading1-size: 1.8em;
+        --r-heading2-size: 1.4em;
+        --r-heading3-size: 1.2em;
+      }
+      .reveal p { line-height: 1.25; }
+      .reveal ul, .reveal ol { margin: 10px 0 10px 1.2em; }
+      .reveal li { margin: 6px 0; }
+      .reveal table { font-size: 0.85em; }
+      .reveal section { padding: 10px; }
+      .reveal .slides { width: 100%; }
+      .reveal pre code { line-height: 1.25; font-size: 0.9em; }
+      .reveal code { font-size: 0.95em; }
+      .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+      @media (max-width: 1024px) { .cols { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section data-markdown="./tp03-express-sqlite.md"
+                 data-separator="^---$"
+                 data-separator-vertical="^--$"
+                 data-separator-notes="^Note:"></section>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/reveal.js@5/dist/reveal.js"></script>
+    <script src="https://unpkg.com/reveal.js@5/plugin/markdown/markdown.js"></script>
+    <script src="https://unpkg.com/reveal.js@5/plugin/highlight/highlight.js"></script>
+    <script src="https://unpkg.com/reveal.js@5/plugin/notes/notes.js"></script>
+
+    <script>
+      Reveal.initialize({
+        hash: true,
+        slideNumber: true,
+        plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ],
+        controls: true,
+        progress: true,
+        center: true,
+        transition: 'slide'
+      });
+    </script>
+  </body>
+</html>
