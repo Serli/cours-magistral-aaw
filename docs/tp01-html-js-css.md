@@ -238,6 +238,7 @@ function render(el, n) { el.textContent = String(n); }
 - Animation légère sur le bouton (ex : `transform: scale(1.05)` au clic).
 - Changement d’icône après un certain nombre de likes.
 - **Thème clair/sombre** via `prefers-color-scheme` + toggle utilisateur.
+- Gérer plusieurs cartes utilisateurs.
 
 ---
 
