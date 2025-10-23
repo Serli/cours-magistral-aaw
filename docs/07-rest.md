@@ -148,16 +148,6 @@ Content-Type: application/json
 
 ---
 
-## Sécurité minimale d’une API REST
-
-- **TLS** partout.  
-- **AuthN/AuthZ** : OAuth2 / OIDC, scopes.  
-- **Rate limiting** (ex. 429 + `Retry-After`).  
-- **CORS** explicite si front séparé.  
-- **Logs** d’audit : accès, erreurs, tentatives.  
-
----
-
 ## Versionnement d’API
 
 - Stratégies :  

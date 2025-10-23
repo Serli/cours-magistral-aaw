@@ -166,16 +166,6 @@ self.addEventListener("install", event => {
 
 ---
 
-## Travaux pratiques
-
-🎯 **Objectif :** construire une mini SPA.  
-- Afficher une liste de produits via une API REST.  
-- Ajouter un système de favoris stocké en `localStorage`.  
-- Utiliser un routeur client (React Router, Vue Router).  
-- Bonus : transformer en **PWA** installable.  
-
----
-
 ## Partie suivante
 
 ### Partie VII — Les APIs REST
