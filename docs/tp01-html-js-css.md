@@ -1,4 +1,4 @@
-# 🧪 HTML, JS et CSS : premiers pas
+# 🧪 TP1 - HTML, JS et CSS : premiers pas
 **Master Informatique – Architecture des Applications Web**
 
 ---
@@ -248,5 +248,3 @@ function render(el, n) { el.textContent = String(n); }
 - MDN – [`localStorage`](https://developer.mozilla.org/fr/docs/Web/API/Window/localStorage)
 - Web.dev – [Responsive Design Basics](https://web.dev/learn/design/)
 - A11Y – [Checklist WCAG rapide](https://www.w3.org/WAI/standards-guidelines/wcag/)
-
----
