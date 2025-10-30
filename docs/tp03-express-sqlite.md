@@ -40,6 +40,8 @@
    ├── public/
    │   ├── index.html
    │   └── app.js
+   ├── dao/
+   │   └── index.js
    ├── db/
    │   ├── schema.sql
    │   └── index.js
@@ -97,8 +99,9 @@ module.exports = { db };
 
 ## 🔎 DAO minimal (requêtes préparées)
 
+Créez `dao/index.js` :
 ```js
-const { db } = require('./db');
+const { db } = require('../db');
 
 const stmtList = db.prepare(`
   SELECT id, title, priority, createdAt
@@ -124,7 +127,7 @@ module.exports.todoRepo = {
 
 ```js
 const express = require('express');
-const { todoRepo } = require('./repo'); // ou server.js directement
+const { dao } = require('./dao'); // ou server.js directement
 const app = express();
 
 const PRIORITIES = new Set(['URGENTE','NORMALE','FAIBLE']);
@@ -134,7 +137,7 @@ app.use(express.json());
 app.use(express.static('public'));
 
 app.get('/api/v1/todos', (req, res) => {
-  res.json(todoRepo.list());
+  res.json(dao.list());
 });
 ```
 ---

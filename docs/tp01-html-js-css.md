@@ -67,7 +67,7 @@
 <article class="card" aria-live="polite">
   <img class="avatar" src="https://i.pravatar.cc/160?img=12" alt="Avatar de l’utilisateur" />
   <h2 class="name">Jane Doe</h2>
-  <p class="likes" data-key="likes">❤️ <span class="count">0</span></p>
+  <p class="likes">❤️ <span class="count">0</span></p>
   <button class="like-btn" type="button" aria-pressed="false">Like</button>
 </article>
 ```
