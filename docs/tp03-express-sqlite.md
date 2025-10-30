@@ -113,7 +113,7 @@ const stmtGet = db.prepare('SELECT id FROM todos WHERE id = ?');
 const stmtInsert = db.prepare('INSERT INTO todos (id, title, priority, createdAt) VALUES (?,?,?,?)');
 const stmtDelete = db.prepare('DELETE FROM todos WHERE id = ?');
 
-module.exports.todoRepo = {
+module.exports.dao = {
   list() { return stmtList.all(); },
   exists(id) { return !!stmtGet.get(id); },
   create(todo) { stmtInsert.run(todo.id, todo.title, todo.priority, todo.createdAt); },
