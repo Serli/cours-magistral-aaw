@@ -79,18 +79,26 @@ CREATE INDEX IF NOT EXISTS idx_todos_createdAt ON todos(createdAt);
 
 Créez `db/index.js` :
 ```js
-const Database = require('better-sqlite3');
-const fs = require('fs');
-const path = require('path');
+import Database from 'better-sqlite3';
+import { readFileSync } from 'node:fs';
+import { join, resolve as pathResolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const DB_PATH = process.env.DB_PATH || path.join(__dirname, '..', 'data.db');
-const db = new Database(DB_PATH, { verbose: process.env.SQL_DEBUG ? console.log : null });
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
-// appliquer le schéma
-const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
+const DB_PATH = process.env.DB_PATH
+  ? pathResolve(process.env.DB_PATH)
+  : join(__dirname, 'data.db');
+
+const db = new Database(DB_PATH, {
+  verbose: process.env.SQL_DEBUG ? console.log : undefined,
+});
+
+const schemaPath = join(__dirname, 'schema.sql');
+const schema = readFileSync(schemaPath, 'utf8');
 db.exec(schema);
 
-module.exports = { db };
+export default db;
 ```
 
 > Option : activez `SQL_DEBUG=1` pour tracer les requêtes pendant le dev.
@@ -101,7 +109,7 @@ module.exports = { db };
 
 Créez `dao/index.js` :
 ```js
-const { db } = require('../db');
+import db from '../db/index.js';
 
 const stmtList = db.prepare(`
   SELECT id, title, priority, createdAt
@@ -113,9 +121,9 @@ const stmtGet = db.prepare('SELECT id FROM todos WHERE id = ?');
 const stmtInsert = db.prepare('INSERT INTO todos (id, title, priority, createdAt) VALUES (?,?,?,?)');
 const stmtDelete = db.prepare('DELETE FROM todos WHERE id = ?');
 
-module.exports.dao = {
+export const dao = {
   list() { return stmtList.all(); },
-  exists(id) { return !!stmtGet.get(id); },
+  get(id) { return stmtGet.get(id); },
   create(todo) { stmtInsert.run(todo.id, todo.title, todo.priority, todo.createdAt); },
   delete(id) { return stmtDelete.run(id).changes; }
 };
@@ -126,8 +134,9 @@ module.exports.dao = {
 ## 🛠️ Intégration dans les routes (1/3)
 
 ```js
-const express = require('express');
-const { dao } = require('./dao'); // ou server.js directement
+import express from 'express';
+import { dao } from './dao/index.js';
+
 const app = express();
 
 const PRIORITIES = new Set(['URGENTE','NORMALE','FAIBLE']);
@@ -155,7 +164,7 @@ app.post('/api/v1/todos', (req, res) => {
   }
   const todo = { id: uid(), title: title.trim(), priority, createdAt: new Date().toISOString() };
   try {
-    todoRepo.create(todo);
+    dao.create(todo);
     return res.status(201).json(todo);
   } catch (e) {
     console.error('insert failed', e);
@@ -172,7 +181,7 @@ app.post('/api/v1/todos', (req, res) => {
 app.delete('/api/v1/todos/:id', (req, res) => {
   const id = req.params.id;
   try {
-    const changes = todoRepo.delete(id);
+    const changes = dao.delete(id);
     if (changes === 0) return res.status(404).json({ error: 'Not Found' });
     return res.status(204).end();
   } catch (e) {
