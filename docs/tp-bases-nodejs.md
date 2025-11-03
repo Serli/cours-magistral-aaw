@@ -98,6 +98,48 @@ node app.mjs
 
 ---
 
+## 📂 Chemins en Node : `__dirname` en ESM
+
+Quand on passe de **CommonJS → ES Modules**, certaines variables n'existent plus 👇
+
+### ❌ En ESM
+
+```js
+console.log(__dirname);   // ❌ ReferenceError
+console.log(__filename);  // ❌ ReferenceError
+```
+
+Ces variables viennent de CommonJS uniquement.
+
+---
+
+### ✅ En ESM, utiliser `import.meta.url`
+
+```js
+console.log(import.meta.url); 
+// file:///Users/.../app.js
+```
+
+> ⚠️ Ce n’est pas un chemin système mais une URL `file://`
+
+---
+
+### ✅ Recréer `__dirname` et `__filename` en ESM
+
+```js
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+console.log(__dirname);
+```
+
+> 💡 Bonne pratique : mettre ce snippet dans un utilitaire et l’importer
+
+---
+
 ## 🧾 npm & package.json
 
 Créer un projet :  
