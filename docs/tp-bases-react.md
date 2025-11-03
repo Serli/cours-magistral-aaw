@@ -228,6 +228,79 @@ useEffect(() => {
 
 ---
 
+## Rendre du contenu conditionnel
+
+Afficher du contenu **seulement si** une condition est vraie ✅
+
+Plusieurs syntaxes existent selon le cas d’usage.
+
+| Situation | Recommandé |
+|---|---|
+Afficher si vrai | `&&` |
+Choix entre 2 options | `? :` |
+Logique complexe | `if` avant `return` |
+Plusieurs cas | `if/else if/else` avant `return` |
+
+---
+
+## ✅ Option 1 — `if` classique (avant le `return`)
+
+👉 Idéal si la logique est longue
+
+```jsx
+function Welcome({ user }) {
+  if (!user) {
+    return <p>Veuillez vous connecter</p>;
+  }
+
+  return <p>Bienvenue {user.name} 👋</p>;
+}
+```
+
+👍 Lisible  
+⚠️ Pas utilisable directement **dans** le JSX
+
+---
+
+## ✅ Option 2 — Opérateur ternaire `? :`
+
+👉 Pour choisir entre **2 éléments**
+
+```jsx
+function Status({ online }) {
+  return (
+    <p>
+      {online ? "🟢 En ligne" : "⚪ Hors ligne"}
+    </p>
+  );
+}
+```
+
+👍 Compact  
+⚠️ Devenir illisible si trop de logique
+
+---
+
+## ✅ Option 3 — `&&` logique (rendre **ou rien**)
+
+👉 Pour afficher un élément **si condition vraie**
+
+```jsx
+function Notification({ unreadCount }) {
+  return (
+    <div>
+      <p>Messages</p>
+      {unreadCount > 0 && <span>📩 {unreadCount} non lus</span>}
+    </div>
+  );
+}
+```
+
+👍 Très courant  
+⚠️ Pas d'alternative (pas de `else`)
+
+---
+
 ## ⬆️ Lever l’état (Lifting state up)
 
 - Si deux composants doivent **partager** un état, le remonter dans leur **parent** et passer des **props**.  
