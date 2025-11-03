@@ -37,9 +37,31 @@ node script.mjs
 
 > Extension `.mjs` = module ES ; en alternative, `"type": "module"` dans `package.json`
 
+⚠️ Deux systèmes de modules existent en Node.js. 
+Comprendre la différence est essentiel pour éviter les erreurs.
+
 ---
 
-## 📦 Modules ES (import / export)
+## 🏛️ CommonJS (CJS)
+
+Historique, et encore courant !
+
+**Import**
+```js
+const fs = require('fs');
+const utils = require('./utils');
+```
+
+**Export**
+```js
+module.exports = function doSomething() { console.log('hello') };
+// ou
+exports.doSomething = () => console.log('hello');
+```
+
+---
+
+## 📦 Modules ES (ESM)
 
 ### `math.mjs`
 ```js
@@ -57,6 +79,22 @@ console.log(add(2, 3), square(4), PI);
 **À retenir :**  
 - Un **export default** par fichier max (optionnel).  
 - Les imports relatifs doivent inclure l’**extension** en ESM.
+
+---
+
+## ⚙️ Activer ESM dans node
+
+### Option 1 : `package.json`
+```json
+{
+  "type": "module"
+}
+```
+
+### Option 2 : `.mjs`
+```bash
+node app.mjs
+```
 
 ---
 
