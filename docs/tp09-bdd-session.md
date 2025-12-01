@@ -5,44 +5,41 @@
 
 ## 🎯 Objectifs
 
-- Manipuler les cookies.
-- Persister l’état de connexion côté client.
-
+- Mise en place d’un système de sessions professionnel.
+- Gestion de l’expiration.
+- Table dédiée.
 ---
 
 
 ## 🧱 Étape 1 — Backend
 
-- Lors du login ajouter un cookie contenant le login
-
-```js
-const cookieParser = require('cookie-parser')
-app.use(cookieParser());
-...
-
-app.post('/api/login', (req, res)=>{
-    ...
-    res.cookie('authentification', USER_LOGIN);
-    ...
-});
-```
-- Créer une route /api/me qui retournera l'utilisateur correspondant au ccokie
-```js
-app.get("/api/me", (req, res) => {
-    const cookieValue = req.cookies.authentification;
-    ...
-});
+- Créer une table :
+ ```sql
+sessions (
+id uuid primary key,
+user_id int,
+created_at datetime,
+expires_at datetime
+)
 ```
 
----
 
-## 🧩 Étape 2 — Frontend
+- À la connexion :
 
-- Au chargement, envoyer GET /me.
-- Si la route répond OK → l’utilisateur est connecté.
-- Sinon → on affiche le composant de connection.
----
+    - Insérer une session en DB.
+    - Placer sessionId dans un cookie HttpOnly.
+    - Retourner OK.
 
-## 🔎 Contraintes
+- Le middleware :
 
-- Cookie lisible et manipulable.
+    - vérifie sessionId
+
+    - charge la session
+
+    - contrôle l’expiration
+
+    - charge l’utilisateur
+
+- Route /logout :
+
+    - supprime la session en base.

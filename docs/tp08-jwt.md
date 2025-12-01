@@ -5,44 +5,32 @@
 
 ## 🎯 Objectifs
 
-- Manipuler les cookies.
-- Persister l’état de connexion côté client.
-
+- Utiliser un token signé.
+- Comprendre les architectures stateless.
 ---
 
 
 ## 🧱 Étape 1 — Backend
 
-- Lors du login ajouter un cookie contenant le login
+- À la connexion :
+
+1. Signer un JWT contenant :
 
 ```js
-const cookieParser = require('cookie-parser')
-app.use(cookieParser());
-...
-
-app.post('/api/login', (req, res)=>{
-    ...
-    res.cookie('authentification', USER_LOGIN);
-    ...
-});
-```
-- Créer une route /api/me qui retournera l'utilisateur correspondant au ccokie
-```js
-app.get("/api/me", (req, res) => {
-    const cookieValue = req.cookies.authentification;
-    ...
-});
+{ "login": "admin", "exp": <timestamp> }
 ```
 
----
+2. Stocker le token dans un cookie HttpOnly 
 
-## 🧩 Étape 2 — Frontend
 
-- Au chargement, envoyer GET /me.
-- Si la route répond OK → l’utilisateur est connecté.
-- Sinon → on affiche le composant de connection.
+3. Créer un middleware pour :
+
+- lire le token,
+- vérifier la signature,
+- vérifier l’expiration.
+
 ---
 
 ## 🔎 Contraintes
 
-- Cookie lisible et manipulable.
+- Difficile à révoquer.

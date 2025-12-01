@@ -5,44 +5,37 @@
 
 ## 🎯 Objectifs
 
-- Manipuler les cookies.
-- Persister l’état de connexion côté client.
+- Comprendre l’authentification stateful.
+- Gérer un store de sessions en mémoire.
 
 ---
 
 
 ## 🧱 Étape 1 — Backend
 
-- Lors du login ajouter un cookie contenant le login
+- À la connexion :
+
+1. Générer un sessionId.
 
 ```js
-const cookieParser = require('cookie-parser')
-app.use(cookieParser());
-...
-
-app.post('/api/login', (req, res)=>{
-    ...
-    res.cookie('authentification', USER_LOGIN);
-    ...
-});
+sessions[sessionId] = { login, createdAt };
 ```
-- Créer une route /api/me qui retournera l'utilisateur correspondant au ccokie
+    
+2. Envoyer un cookie contenant cet id
+
+
+3. Créer un middleware :
+
 ```js
-app.get("/api/me", (req, res) => {
-    const cookieValue = req.cookies.authentification;
-    ...
-});
+function auth(req, res, next) { ... }
 ```
 
----
+Les routes TODO doivent utiliser ce middleware.
 
-## 🧩 Étape 2 — Frontend
-
-- Au chargement, envoyer GET /me.
-- Si la route répond OK → l’utilisateur est connecté.
-- Sinon → on affiche le composant de connection.
----
+```js
+app.use("/api/todos/*", auth)
+```
 
 ## 🔎 Contraintes
 
-- Cookie lisible et manipulable.
+- Session propre à l'instance de serveur
