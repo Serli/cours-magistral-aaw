@@ -14,20 +14,18 @@
 
 - À la connexion :
 
-1. Signer un JWT contenant :
+  1. Signer un JWT contenant :
 
-```js
-{ "login": "admin", "exp": <timestamp> }
-```
+        ```js
+        { "login": "admin", "exp": <timestamp> }
+        ```
 
-2. Stocker le token dans un cookie HttpOnly 
+  2. Stocker le token dans un cookie HttpOnly
+  3. Créer un middleware pour :
 
-
-3. Créer un middleware pour :
-
-- lire le token,
-- vérifier la signature,
-- vérifier l’expiration.
+     - lire le token,
+     - vérifier la signature,
+     - vérifier l’expiration.
 
 ---
 
