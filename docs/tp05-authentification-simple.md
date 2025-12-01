@@ -1,47 +1,34 @@
-TP1 — Authentification simple via formulaire
-🎯 Objectifs
+# 🧪 TP5 — Authentification simple via formulaire
+**Master Informatique – Architecture des Applications Web**
 
-Implémenter un flux de login minimal.
+---
 
-Contrôler l’accès au front via React.
+## 🎯 Objectifs
 
-Backend
+- Implémenter un flux de login minimal.
+- Contrôler l’accès au front via React.
 
-Créer une route :
-
-POST /login
-
-
-Elle doit :
-
-Vérifier un couple login/password codé en dur.
-
-Retourner :
-
-{ "success": true }
+---
 
 
-en cas de succès.
+## 🧱 Étape 1 — Backend
 
-Retourner :
+- Créer une route POST /api/login
+- Elle doit retourner une 200 en cas de succés
+- Elle doit retourner une 401 en cas d'échec
 
-{ "success": false }
+---
 
+## 🧩 Étape 2 — Frontend
 
-sinon.
+- Créer /login avec un formulaire.
+- Soumission → requête POST vers /login.
+- Si succès → affichage du composant todo.
+- Empêcher /todo d’être accessible si isAuthenticated = false.
 
-Frontend
+---
 
-Créer /login avec un formulaire.
+## 🔎 Contraintes
 
-Soumission → requête POST vers /login.
-
-Si succès → redirection vers /todo.
-
-Empêcher /todo d’être accessible si isAuthenticated = false.
-
-Contraintes
-
-Aucune persistance (pas de cookie).
-
-Un refresh = déconnexion.
+- Aucune persistance (pas de cookie).
+- Un refresh = déconnexion.
