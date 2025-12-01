@@ -1,4 +1,4 @@
-# 🧪 TP5 — Authentification simple via formulaire
+# 🧪 TP6 — Cookie contenant le login (auto-login naïf)
 **Master Informatique – Architecture des Applications Web**
 
 ---
