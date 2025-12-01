@@ -22,7 +22,7 @@
 ## 🧩 Étape 2 — Frontend
 
 - Créer un composant login avec un formulaire.
-- Soumission → requête POST vers /login.
+- Soumission → requête POST vers /api/login.
 - Si succès → affichage du composant todo.
 - Empêcher /todo d’être accessible si isAuthenticated = false.
 
