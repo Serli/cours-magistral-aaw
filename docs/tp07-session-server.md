@@ -1,4 +1,4 @@
-# 🧪 TP5 — Authentification simple via formulaire
+# 🧪 TP7 — Sessions côté serveur (Stateful)
 **Master Informatique – Architecture des Applications Web**
 
 ---

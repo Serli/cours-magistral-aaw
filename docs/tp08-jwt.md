@@ -1,4 +1,4 @@
-# 🧪 TP5 — Authentification simple via formulaire
+# 🧪 TP8 — Authentification par JWT
 **Master Informatique – Architecture des Applications Web**
 
 ---
