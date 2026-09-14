@@ -278,5 +278,8 @@ L’étudiant doit être capable, à la fin du cours, de **concevoir et critique
 - **OWASP Web Security Testing Guide**  
   - 🌐 [owasp.org/www-project-web-security-testing-guide](https://owasp.org/www-project-web-security-testing-guide/)
 
+- Lien vers le discord
+  - [AAW - 2026/2027](https://discord.gg/MUvtHAHed)
+
 ---
 
